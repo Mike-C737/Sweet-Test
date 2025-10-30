@@ -1,126 +1,125 @@
-import './App.css'
+import { useMemo } from 'react'
+import {
+  ThemeProvider, createTheme, CssBaseline,
+  Box, Paper, Typography, Grid,
+  TextField, MenuItem, Stack, Button
+} from '@mui/material'
 
 const STATES = [
-  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME',
+  'MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA',
+  'RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
 ]
 
 export default function App() {
+  const theme = useMemo(() => createTheme({
+    palette: { mode: 'light', background: { default: '#f7f7f9' } },
+    typography: { fontFamily: 'Roboto, system-ui, Segoe UI, Arial, sans-serif' },
+    shape: { borderRadius: 12 },
+  }), [])
+
   function handleSubmit(e) {
     e.preventDefault()
     const data = Object.fromEntries(new FormData(e.currentTarget).entries())
     console.log('FORM SUBMIT →', data)
-    alert('Form submitted! (Open the browser console to see the payload)')
+    alert('Form submitted! (Check the console for the payload)')
     e.currentTarget.reset()
   }
 
+  // MUI v6+ prefers slotProps instead of inputProps
+  const phoneSlotProps = { input: { pattern: '[0-9()+. -]{7,20}' } } // 7–20 chars: digits + ()+.- + space
+  const employeesSlotProps = { input: { min: 1, step: 1 } }
+
   return (
-    <main style={{ padding: 24, maxWidth: 800, margin: '0 auto' }}>
-      <h1 style={{ marginBottom: 8 }}>New Opportunity</h1>
-      <p style={{ marginTop: 0, color: '#555' }}>
-        Enter the details below and submit.
-      </p>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
 
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 14 }}>
-        {/* Company */}
-        <label>
-          <span>Company *</span>
-          <input name="company" type="text" required placeholder="Acme Inc." />
-        </label>
+      {/* center the form card */}
+      <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: 2 }}>
+        <Paper
+          elevation={3}
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ p: { xs: 3, sm: 4 }, width: '100%', maxWidth: 880, mx: 'auto' }}
+        >
+          <Typography variant="h4" align="center" gutterBottom>
+            New Opportunity
+          </Typography>
+          <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
+            Please provide the details below. Fields marked * are required.
+          </Typography>
 
-        {/* Email */}
-        <label>
-          <span>Email *</span>
-          <input name="email" type="email" required placeholder="name@company.com" />
-        </label>
+          {/* Exactly two equal columns on md+ (1 column on phones) */}
+          <Grid container spacing={2} columns={{ xs: 1, md: 2 }}>
+            <Grid item xs={1}>
+              <TextField fullWidth name="company" label="Company *" required placeholder="Acme Inc." />
+            </Grid>
+            <Grid item xs={1}>
+              <TextField fullWidth name="email" type="email" label="Email *" required placeholder="name@company.com" />
+            </Grid>
 
-        {/* State */}
-        <label>
-          <span>State *</span>
-          <select name="state" required defaultValue="">
-            <option value="" disabled>Select state…</option>
-            {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </label>
+            <Grid item xs={1}>
+              <TextField fullWidth name="state" label="State *" select defaultValue="" required>
+                <MenuItem value="" disabled>Select state…</MenuItem>
+                {STATES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+              </TextField>
+            </Grid>
+            <Grid item xs={1}>
+              <TextField fullWidth name="firstName" label="First Name *" required />
+            </Grid>
 
-        {/* First / Last Name */}
-        <div style={{ display: 'grid', gap: 14, gridTemplateColumns: '1fr 1fr' }}>
-          <label>
-            <span>First Name *</span>
-            <input name="firstName" type="text" required />
-          </label>
-          <label>
-            <span>Last Name *</span>
-            <input name="lastName" type="text" required />
-          </label>
-        </div>
+            <Grid item xs={1}>
+              <TextField fullWidth name="lastName" label="Last Name *" required />
+            </Grid>
+            <Grid item xs={1}>
+              <TextField fullWidth name="title" label="Opportunity Title *" required placeholder="Roof Replacement – HQ" />
+            </Grid>
 
-        {/* Opportunity Title */}
-        <label>
-          <span>Opportunity Title *</span>
-          <input name="title" type="text" required placeholder="Roof Replacement – HQ" />
-        </label>
+            <Grid item xs={1}>
+              <TextField
+                fullWidth
+                name="phoneOffice"
+                label="Phone (office)"
+                placeholder="(555) 555-1212"
+                slotProps={phoneSlotProps}
+              />
+            </Grid>
+            <Grid item xs={1}>
+              <TextField
+                fullWidth
+                name="phoneCell"
+                label="Phone (cell)"
+                placeholder="(555) 555-3434"
+                slotProps={phoneSlotProps}
+              />
+            </Grid>
 
-        {/* Phones */}
-        <div style={{ display: 'grid', gap: 14, gridTemplateColumns: '1fr 1fr' }}>
-          <label>
-            <span>Phone (office)</span>
-            <input
-              name="phoneOffice"
-              type="tel"
-              inputMode="tel"
-              placeholder="(555) 555-1212"
-              pattern="[0-9]{7,20}"
+            <Grid item xs={1}>
+              <TextField fullWidth name="website" type="url" label="Website" placeholder="https://example.com" />
+            </Grid>
+            <Grid item xs={1}>
+              <TextField fullWidth name="industry" label="Industry" placeholder="Manufacturing" />
+            </Grid>
 
-              title="7-20 digits; spaces and ()+.- allowed"
+            <Grid item xs={1}>
+              <TextField
+                fullWidth
+                name="employees"
+                type="number"
+                label="Number of Employees"
+                slotProps={employeesSlotProps}
+              />
+            </Grid>
+            {/* spacer to balance the last row */}
+            <Grid item xs={1} />
+          </Grid>
 
-
-            />
-          </label>
-          <label>
-            <span>Phone (cell)</span>
-            <input
-              name="phoneCell"
-              type="tel"
-              inputMode="tel"
-              placeholder="(555) 555-3434"
-              pattern="[0-9]{7,20}"
-
-              title="7-20 digits; spaces and ()+.- allowed"
-
-            />
-          </label>
-        </div>
-
-        {/* Website */}
-        <label>
-          <span>Website</span>
-          <input name="website" type="url" placeholder="https://example.com" />
-        </label>
-
-        {/* Industry */}
-        <label>
-          <span>Industry</span>
-          <input name="industry" type="text" placeholder="Manufacturing" />
-        </label>
-
-        {/* Number of Employees */}
-        <label>
-          <span>Number of Employees</span>
-          <input name="employees" type="number" min="1" step="1" placeholder="100" />
-        </label>
-
-        <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-          <button type="submit">Submit</button>
-          <button type="reset">Reset</button>
-        </div>
-      </form>
-
-      {/* tiny form styles for a clean layout */}
-      <style>{`
-        label { display: grid; gap: 6px; }
-        input, select, button { padding: 10px 12px; font-size: 14px; }
-        button { cursor: pointer; }
-      `}</style>
-    </main>
+          <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 4 }}>
+            <Button type="submit" variant="contained" size="large">Submit</Button>
+            <Button type="reset" variant="outlined" size="large">Reset</Button>
+          </Stack>
+        </Paper>
+      </Box>
+    </ThemeProvider>
   )
 }
