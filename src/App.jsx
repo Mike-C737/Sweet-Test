@@ -1,8 +1,15 @@
 import { useMemo } from 'react'
 import {
   ThemeProvider, createTheme, CssBaseline,
-  Box, Paper, Typography, Stack, TextField, Button
+  Box, Paper, Typography, Stack, TextField, MenuItem, Button
 } from '@mui/material'
+
+const STATES = [
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME',
+  'MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA',
+  'RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+]
+
 
 export default function App() {
   const theme = useMemo(() => createTheme({
@@ -19,7 +26,6 @@ export default function App() {
     e.currentTarget.reset()
   }
 
-  // MUI v6+ prefers slotProps for input attributes
   const phoneSlotProps = { input: { pattern: '[0-9()+. -]{7,20}' } } // 7–20 chars; digits + ()+.- + space
   const employeesSlotProps = { input: { min: 1, step: 1 } }
 
@@ -27,7 +33,6 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      {/* Center the form card */}
       <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: 2 }}>
         <Paper
           elevation={3}
@@ -49,6 +54,14 @@ export default function App() {
             {/* Company */}
             <TextField fullWidth name="company" label="Company" required placeholder="Acme Inc." />
 
+            {/* State dropdown */}
+            <TextField 
+              fullWidth name="state" label="State" select defaultValue="" required >
+              <MenuItem value="" disabled>Select state…</MenuItem>
+              {STATES.map(s => ( <MenuItem key={s} value={s}>{s}</MenuItem> ))} 
+            </TextField>
+            
+            
             {/* Industry */}
             <TextField fullWidth name="industry" label="Industry" required placeholder="Manufacturing" />
 
